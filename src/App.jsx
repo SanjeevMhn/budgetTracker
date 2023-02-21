@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useRef} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -48,7 +48,38 @@ export const data = {
   ],
 };
 
+
+const checkDigits = (num) => {
+  return num.toString().length;
+}
+
 const App = () => {
+
+  const dateToday = useRef(null);
+  useEffect(()=>{
+    const setTodaysDate = () => {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+
+      let lenMonth = checkDigits(month);
+      let lenDay = checkDigits(day);
+
+      if(lenMonth == 1){
+        month = "0" + month;
+      }
+      if(lenDay == 1){
+        day = "0" + day;
+      }
+
+      let today = `${year}-${month}-${day}`;
+
+      dateToday.current.value = today;
+    }
+
+    setTodaysDate();
+  },[])
 
   return (
     <>
@@ -66,19 +97,20 @@ const App = () => {
           <FontAwesomeIcon icon={faPlus} />
         </button>
       </div>
-      <div className="flex mt-3">
+      <div className="flex mt-3 flex-col lg:flex-row">
         <div className="weekly-spending p-3 flex-grow">
-          <Bar options={options} data={data} />;
+          <Bar options={options} data={data} />
         </div>
-        <div className="transactions p-3 w-[40%] flex flex-col justify-center">
-          <div className="header flex items-center mb-3">
-            <h2 className="title font-semibold text-[18px]">Latest Transactions</h2>
-            <button className="add-fund px-3 py-1 bg-[rgb(17_175_131)] text-white rounded-full text-xs flex items-center justify-center ml-auto" type="button">
+        <div className="transactions p-3 w-full lg:w-[40%]">
+          <div className="header flex items-center mb-3 justify-between">
+            <h2 className="title font-semibold text-[15px]">Latest Transactions</h2>
+            {/* <button className="add-fund px-3 py-1 bg-[rgb(17_175_131)] text-white rounded-full text-xs flex items-center justify-center ml-auto" type="button">
               <FontAwesomeIcon icon={faPlus} className="flex" />
               <span className="pl-2">
                 Add
               </span>
-            </button>
+            </button> */}
+            <input type="date" name="current-date" id="" className="form-control w-[38%] text-[15px]" ref={dateToday} value=""/>
           </div>
           <table className='w-full'>
             <thead>

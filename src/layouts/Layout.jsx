@@ -10,7 +10,7 @@ const Layout = () => {
         <div className='layout-wrapper relative'>
             <TopNav />
             <Sidenav />
-            <main className='min-h-[calc(100vh-45px)] ml-[220px] p-[20px]'>
+            <main className='min-h-[calc(100vh-45px)] ml-[70px] lg:ml-[220px] p-[20px]'>
                 <Outlet />
             </main>
         </div>

@@ -4,6 +4,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faWallet } from '@fortawesome/free-solid-svg-icons';
+import { faMoneyBill1Wave } from '@fortawesome/free-solid-svg-icons';
 
 const TopNav = () => {
 
@@ -11,7 +12,7 @@ const TopNav = () => {
         <nav className='top-nav bg-blue-400 sticky top-0 h-[45px] w-full px-3 flex items-center justify-between'>
             <a href="#" className="brand-link flex p-2 text-xl items-center text-white">
                 <span className="icon-container leading-none">
-                    <FontAwesomeIcon icon={faWallet} />
+                    <FontAwesomeIcon icon={faMoneyBill1Wave} />
                 </span>
                 <span className="label-text pl-3">
                     Budget Tracker
