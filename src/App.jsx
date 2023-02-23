@@ -1,4 +1,4 @@
-import React,{useEffect, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -12,6 +12,8 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { faker } from '@faker-js/faker';
+import AddExpense from './components/AddExpense';
+import ExpenseModal from './components/ExpenseModal';
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +37,7 @@ export const options = {
   },
 };
 
-const labels = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export const data = {
   labels,
@@ -56,7 +58,40 @@ const checkDigits = (num) => {
 const App = () => {
 
   const dateToday = useRef(null);
-  useEffect(()=>{
+  const [transactions, setTransactions] = useState([
+    {
+      id: 1,
+      date: "2022-02-23",
+      name: "Internet Bill",
+      amount: 1650
+    },
+    {
+      id: 2,
+      date: "2022-02-23",
+      name: "Electricity Bill",
+      amount: 550
+    },
+    {
+      id: 3,
+      date: "2022-02-23",
+      name: "Water Bill",
+      amount: 250
+    },
+    {
+      id: 4,
+      date: "2022-02-23",
+      name: "Bike Petrol",
+      amount: 500
+    },
+    {
+      id: 5,
+      date: "2022-02-23",
+      name: "Vegetables",
+      amount: 350
+    },
+  ])
+
+  useEffect(() => {
     const setTodaysDate = () => {
       let date = new Date();
       let year = date.getFullYear();
@@ -66,10 +101,10 @@ const App = () => {
       let lenMonth = checkDigits(month);
       let lenDay = checkDigits(day);
 
-      if(lenMonth == 1){
+      if (lenMonth == 1) {
         month = "0" + month;
       }
-      if(lenDay == 1){
+      if (lenDay == 1) {
         day = "0" + day;
       }
 
@@ -79,10 +114,10 @@ const App = () => {
     }
 
     setTodaysDate();
-  },[])
+  }, [])
 
   return (
-    <>
+    <div className="wrapper">
       <h2 className="welcome-msg text-xl mb-3 font-semibold">
         Welcome back, Sanjeev
       </h2>
@@ -110,7 +145,7 @@ const App = () => {
                 Add
               </span>
             </button> */}
-            <input type="date" name="current-date" id="" className="form-control w-[38%] text-[15px]" ref={dateToday} value=""/>
+            <input type="date" name="current-date" id="" className="form-control w-[38%] text-[15px]" ref={dateToday} value="" />
           </div>
           <table className='w-full'>
             <thead>
@@ -118,52 +153,27 @@ const App = () => {
               <th className='text-right border border-gray-400 px-2'>Amount</th>
             </thead>
             <tbody>
-              <tr>
-                <td className='border border-gray-400 px-2'>
-                  Internet Bill
-                </td>
-                <td className='text-right border border-gray-400 px-2'>
-                  Rs. 1650
-                </td>
-              </tr>
-              <tr>
-                <td className='border border-gray-400 px-2'>
-                  Electricity Bill
-                </td>
-                <td className='text-right border border-gray-400 px-2'>
-                  Rs. 550
-                </td>
-              </tr>
-              <tr>
-                <td className='border border-gray-400 px-2'>
-                  Water Bill
-                </td>
-                <td className='text-right border border-gray-400 px-2'>
-                  Rs. 250
-                </td>
-              </tr>
-              <tr>
-                <td className='border border-gray-400 px-2'>
-                  Bike Petrol
-                </td>
-                <td className='text-right border border-gray-400 px-2'>
-                  Rs. 500
-                </td>
-              </tr>
-              <tr>
-                <td className='border border-gray-400 px-2'>
-                  Vegetables
-                </td>
-                <td className='text-right border border-gray-400 px-2'>
-                  Rs. 350
-                </td>
-              </tr>
+              {transactions.map((tran, index) => {
+                return (
+                  <tr key={index}>
+                    <td className='border border-gray-400 px-2'>
+                      {tran.name}
+                    </td>
+                    <td className='text-right border border-gray-400 px-2'>
+                      {tran.amount}
+                    </td>
+                  </tr>
+                )
+              })}
+
             </tbody>
           </table>
         </div>
       </div>
+      <AddExpense />
 
-    </>
+      <ExpenseModal />
+    </div>
   )
 
 }
