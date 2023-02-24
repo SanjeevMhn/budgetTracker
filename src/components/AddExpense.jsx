@@ -1,9 +1,9 @@
 import React from "react";
 
-const AddExpense = () => {
+const AddExpense = ({showModal,setShowModal}) => {
 
     return (
-        <button type="button" className="w-[65px] h-[65px] bg-cyan-600 text-white rounded-full flex items-center justify-center absolute bottom-[20px] left-[50%] lg:left-[calc(50%+220px)] lg:translate-x-[calc(50%-calc(220px-calc(65px/2)))] overflow-visible group">
+        <button type="button" className="w-[65px] h-[65px] bg-cyan-600 text-white rounded-full flex items-center justify-center absolute bottom-[20px] left-[50%] lg:left-[calc(50%+220px)] lg:translate-x-[calc(50%-calc(220px-calc(65px/2)))] overflow-visible group" onClick={()=>{setShowModal(showModal = true)}}>
             <span className="icon-container leading-none flex items-center justify-center w-[60%] invert brightness-0">
                 <img src="../src/assets/add-outline.svg" alt="" srcset="" />
             </span>

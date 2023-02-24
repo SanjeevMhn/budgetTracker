@@ -55,9 +55,13 @@ const checkDigits = (num) => {
   return num.toString().length;
 }
 
+
 const App = () => {
 
   const dateToday = useRef(null);
+  const [showModal,setShowModal] = useState(false);
+  const [expenseName, setExpenseName] = useState('');
+  const [expenseAmount, setExpenseAmount] = useState('');
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -91,6 +95,11 @@ const App = () => {
     },
   ])
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(`Date: ${dateToday}, Expense Name: ${expenseName}, Expense Amount: ${expenseAmount}`);
+  }
+
   useEffect(() => {
     const setTodaysDate = () => {
       let date = new Date();
@@ -111,6 +120,7 @@ const App = () => {
       let today = `${year}-${month}-${day}`;
 
       dateToday.current.value = today;
+      today = today.toString;
     }
 
     setTodaysDate();
@@ -145,7 +155,7 @@ const App = () => {
                 Add
               </span>
             </button> */}
-            <input type="date" name="current-date" id="" className="form-control w-[38%] text-[15px]" ref={dateToday} value="" />
+            <input type="text" name="current-date" id="" className="form-control w-[38%] text-[15px] text-right" ref={dateToday} value="" disabled />
           </div>
           <table className='w-full'>
             <thead>
@@ -170,9 +180,16 @@ const App = () => {
           </table>
         </div>
       </div>
-      <AddExpense />
+      <AddExpense showModal={showModal} setShowModal={setShowModal} />
 
-      <ExpenseModal />
+      <ExpenseModal 
+        showModal={showModal} 
+        setShowModal={setShowModal} 
+        expenseAmount={expenseAmount} 
+        expenseName={expenseName} 
+        setExpenseAmount={setExpenseAmount}
+        setExpenseName={setExpenseName}
+        handleSubmit={handleSubmit}  />
     </div>
   )
 
