@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef } from 'react'
+import { FC, useEffect, useState, useRef, FormEvent } from 'react'
 import './App.css'
 
 type ExpensesType = {
@@ -26,6 +26,8 @@ const App:FC = () => {
   const [recentTransactions, setRecentTransactions] = useState<ExpensesType[]>([])
   const userNameRef = useRef(null);
   const budgetAmountRef = useRef(null);
+  const transactionAmountRef = useRef(null);
+  const transactionTypeRef = useRef(null);
 
   const getCurrentDate = ():string => {
     const today = new Date();
@@ -67,7 +69,7 @@ const App:FC = () => {
   }
 
 
-  const handleSubmit = (event:any):void => {
+  const handleSubmit = (event:FormEvent):void => {
     event.preventDefault();
     const currentDate = date;
 
@@ -84,9 +86,23 @@ const App:FC = () => {
     setMonthlyBudget([...monthlyBudget,budgetObject])
   }
 
-  const handleUserName = (event:any) => {
+  const handleUserName = (event:FormEvent) => {
     event.preventDefault();
     setUserName(userNameRef.current.value);
+  }
+
+  const handleTransactionSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    let transactionObj:ExpensesType = {
+      id: Date.now(),
+      category: transactionTypeRef.current.value,
+      date: date,
+      amount: transactionAmountRef.current.value
+    }
+
+    setRecentTransactions([...recentTransactions,transactionObj]);
+    transactionAmountRef.current.value = null;
+    transactionTypeRef.current.value = null;
   }
 
   useEffect(() => {
@@ -132,21 +148,26 @@ const App:FC = () => {
 
               <article className="recent-transactions">
                 <h2 className="header-text">Recent Transactions</h2>
-                <form className="recent-transaction-form">
+                <form className="recent-transaction-form" onSubmit={handleTransactionSubmit}>
                   <div className="form-row">
                     <label htmlFor="transaction-amt">Amount</label>
-                    <input id="transaction-amt" type="number" className="form-control" placeholder="Amount" />
+                    <input id="transaction-amt" type="number" className="form-control" placeholder="Amount" ref={transactionAmountRef} required/>
                   </div>
                   <div className="form-row">
                     <label htmlFor='transaction-category'>Category</label> 
-                    <select id="transaction-category">
+                    <select id="transaction-category" ref={transactionTypeRef} required>
                       <option value="bills">Bills</option>
                       <option value="grocery">Grocery</option>
                       <option value="personal">Personal</option>
                       <option value="home">Home</option>
                     </select>
+                    <span className="side-btn">
+                      <button className="add-btn" type="button">Add Category</button>
+                    </span>
                   </div>
-
+                  <div className="form-row">
+                    <button className="submit-btn" type="submit">Add</button>
+                  </div>                 
                 </form>
                 {
                   recentTransactions.length !== 0 ? (
