@@ -5,7 +5,7 @@ import SetBudget from './components/SetBudget'
 import AddRecentTransactions from './components/AddRecentTransactions'
 import BudgetInfo from './components/BudgetInfo'
 
- export type ExpensesType = {
+export type ExpensesType = {
   id: number,
   category: string,
   amount: number,
@@ -19,7 +19,7 @@ type MonthlyBudgetType = {
   budget: number,
 }
 
-const App:FC = () => {
+const App: FC = () => {
 
   const [userName, setUserName] = useState<string>('');
   const [budget, setBudget] = useState<number>();
@@ -28,89 +28,89 @@ const App:FC = () => {
   const [hasBudgetSet, setHasBudgetSet] = useState<boolean>(false);
   const [budgetMonth, setBudgetMonth] = useState<string>('');
   const [recentTransactions, setRecentTransactions] = useState<ExpensesType[]>([])
-  const [transactionAmount,setTransactionAmount] = useState<number>(0);
+  const [transactionAmount, setTransactionAmount] = useState<number>(0);
   const [transactionType, setTransactionType] = useState<string>('default');
   const userNameRef = useRef(null);
   const budgetAmountRef = useRef(null);
 
-  const getCurrentDate = ():string => {
+  const getCurrentDate = (): string => {
     const today = new Date();
 
-    const dateMonthYearDay = today.toLocaleString('default',{year: 'numeric',month: 'long',day: 'numeric',weekday: 'long'});
-    return dateMonthYearDay; 
+    const dateMonthYearDay = today.toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+    return dateMonthYearDay;
   }
 
-  const initializeDate = ():void => {
-    const date:string = getCurrentDate();
+  const initializeDate = (): void => {
+    const date: string = getCurrentDate();
     setDate(date)
   }
 
-  const initializeMonth = ():void => {
+  const initializeMonth = (): void => {
     setBudgetMonth(date.split(' ')[1]);
   }
 
 
-  const checkCurrentMonthlyBudget = ():void => {
+  const checkCurrentMonthlyBudget = (): void => {
     const currentDate = date;
-    if(monthlyBudget.length !== 0 && monthlyBudget.find((budget) => budget.date = currentDate)){
+    if (monthlyBudget.length !== 0 && monthlyBudget.find((budget) => budget.date = currentDate)) {
       setHasBudgetSet(true);
     }
   }
 
-  const getBudgetForCurrentMonth = ():void => {
+  const getBudgetForCurrentMonth = (): void => {
     const currentDate = date;
-    const getBudgetAmount:MonthlyBudgetType[] = monthlyBudget.filter((month) => {
-      if(month.date === currentDate){
+    const getBudgetAmount: MonthlyBudgetType[] = monthlyBudget.filter((month) => {
+      if (month.date === currentDate) {
         return month
       }
     })
 
-    if(getBudgetAmount.length == 0){
+    if (getBudgetAmount.length == 0) {
       return;
     }
     setBudget(getBudgetAmount[0].budget);
   }
 
 
-  const handleSubmit = (event:FormEvent):void => {
+  const handleSubmit = (event: FormEvent): void => {
     event.preventDefault();
     const currentDate = date;
 
-    if(monthlyBudget.find((budget) => budget.date === currentDate)){
+    if (monthlyBudget.find((budget) => budget.date === currentDate)) {
       return;
     }
-    const budgetObject:MonthlyBudgetType = {
+    const budgetObject: MonthlyBudgetType = {
       id: Date.now(),
       budget: budgetAmountRef.current.value,
       date: currentDate,
-      month: budgetMonth 
+      month: budgetMonth
     }
 
-    setMonthlyBudget([...monthlyBudget,budgetObject])
+    setMonthlyBudget([...monthlyBudget, budgetObject])
   }
 
-  const handleUserName = (event:FormEvent) => {
+  const handleUserName = (event: FormEvent) => {
     event.preventDefault();
     setUserName(userNameRef.current.value);
   }
 
   const handleTransactionSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if(transactionType === 'default'){
+    if (transactionType === 'default') {
       return;
     }
 
-    if(transactionAmount == null || transactionAmount === 0 || transactionAmount < 0){
+    if (transactionAmount == null || transactionAmount === 0 || transactionAmount < 0) {
       return;
     }
-    const transactionObj:ExpensesType = {
+    const transactionObj: ExpensesType = {
       id: Date.now(),
       category: transactionType,
       date: date,
       amount: transactionAmount
     }
 
-    setRecentTransactions([...recentTransactions,transactionObj]);
+    setRecentTransactions([...recentTransactions, transactionObj]);
     setTransactionAmount(0)
     setTransactionType("default")
   }
@@ -120,46 +120,47 @@ const App:FC = () => {
     initializeMonth();
     checkCurrentMonthlyBudget();
     getBudgetForCurrentMonth();
-  },[date,userName,monthlyBudget.length])
+  }, [date, userName, monthlyBudget.length])
 
   return (
     <>
-      {userName !== null && userName !== '' && userName !== undefined ? (<>
-        <nav className="main-nav">
-          <h2 className="header-text">
-            Budget Tracker
-          </h2>
-          <ul className="menu-list">
-            <li className="menu-list-item">
-              <a className="menu-item-link">
-                Profile
-              </a>
-            </li>
-          </ul>
-        </nav>      
-        <section className="budget-wrapper">
-          <h2 className="budget-header">
-            Hello, {userName}
-          </h2>
-          { hasBudgetSet ? (
-            <>
-              <BudgetInfo budgetMonth={budgetMonth} budget={budget} />
-              <AddRecentTransactions 
-                handleTransactionSubmit={handleTransactionSubmit} 
-                recentTransactions={recentTransactions} 
-                transactionAmount={transactionAmount}
-                setTransactionAmount={setTransactionAmount}
-                transactionType={transactionType}
-                setTransactionType={setTransactionType} />
-            </>
-          ) : (
-            <SetBudget handleSubmit={handleSubmit} ref={budgetAmountRef} budgetMonth={budgetMonth} />
-          )}
-        </section>
-      </>) : (
-        <GetUserName handleUserName={handleUserName} ref={userNameRef}/>
-      ) } 
-      
+      {userName !== null && userName !== '' && userName !== undefined ? (
+        <>
+          <nav className="main-nav">
+            <h2 className="header-text">
+              Budget Tracker
+            </h2>
+            <ul className="menu-list">
+              <li className="menu-list-item">
+                <a className="menu-item-link">
+                  Profile
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <section className="budget-wrapper">
+            <h2 className="budget-header">
+              Hello, {userName}
+            </h2>
+            {hasBudgetSet ? (
+              <>
+                <BudgetInfo budgetMonth={budgetMonth} budget={budget} />
+                <AddRecentTransactions
+                  handleTransactionSubmit={handleTransactionSubmit}
+                  recentTransactions={recentTransactions}
+                  transactionAmount={transactionAmount}
+                  setTransactionAmount={setTransactionAmount}
+                  transactionType={transactionType}
+                  setTransactionType={setTransactionType} />
+              </>
+            ) : (
+              <SetBudget handleSubmit={handleSubmit} ref={budgetAmountRef} budgetMonth={budgetMonth} />
+            )}
+          </section>
+        </>) : (
+        <GetUserName handleUserName={handleUserName} ref={userNameRef} />
+      )}
+
     </>
   )
 }
