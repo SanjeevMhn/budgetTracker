@@ -1,10 +1,14 @@
 import { FC, useEffect, useState, useRef, FormEvent } from 'react'
 import './App.css'
+import GetUserName from './components/GetUserName'
+import SetBudget from './components/SetBudget'
+import AddRecentTransactions from './components/AddRecentTransactions'
+import BudgetInfo from './components/BudgetInfo'
 
-type ExpensesType = {
+ export type ExpensesType = {
   id: number,
   category: string,
-  amount: string,
+  amount: number,
   date: string
 }
 
@@ -24,10 +28,10 @@ const App:FC = () => {
   const [hasBudgetSet, setHasBudgetSet] = useState<boolean>(false);
   const [budgetMonth, setBudgetMonth] = useState<string>('');
   const [recentTransactions, setRecentTransactions] = useState<ExpensesType[]>([])
+  const [transactionAmount,setTransactionAmount] = useState<number>(0);
+  const [transactionType, setTransactionType] = useState<string>('default');
   const userNameRef = useRef(null);
   const budgetAmountRef = useRef(null);
-  const transactionAmountRef = useRef(null);
-  const transactionTypeRef = useRef(null);
 
   const getCurrentDate = ():string => {
     const today = new Date();
@@ -42,7 +46,6 @@ const App:FC = () => {
   }
 
   const initializeMonth = ():void => {
-    const currentDate = date;
     setBudgetMonth(date.split(' ')[1]);
   }
 
@@ -93,20 +96,28 @@ const App:FC = () => {
 
   const handleTransactionSubmit = (event: FormEvent) => {
     event.preventDefault();
-    let transactionObj:ExpensesType = {
+    if(transactionType === 'default'){
+      return;
+    }
+
+    if(transactionAmount == null || transactionAmount === 0 || transactionAmount < 0){
+      return;
+    }
+    const transactionObj:ExpensesType = {
       id: Date.now(),
-      category: transactionTypeRef.current.value,
+      category: transactionType,
       date: date,
-      amount: transactionAmountRef.current.value
+      amount: transactionAmount
     }
 
     setRecentTransactions([...recentTransactions,transactionObj]);
-    transactionAmountRef.current.value = null;
-    transactionTypeRef.current.value = null;
+    setTransactionAmount(0)
+    setTransactionType("default")
   }
 
   useEffect(() => {
     initializeDate();
+    initializeMonth();
     checkCurrentMonthlyBudget();
     getBudgetForCurrentMonth();
   },[date,userName,monthlyBudget.length])
@@ -121,9 +132,6 @@ const App:FC = () => {
           <ul className="menu-list">
             <li className="menu-list-item">
               <a className="menu-item-link">
-                Categories
-              </a>
-              <a className="menu-item-link">
                 Profile
               </a>
             </li>
@@ -135,81 +143,22 @@ const App:FC = () => {
           </h2>
           { hasBudgetSet ? (
             <>
-              <article className="budget-initialize">
-                <div className="budget-amount">
-                  Your Budget for {date.split(' ')[1]} is {budget}
-                </div>
-                <div className="budget-indicator">
-                </div>
-              </article>
-
-              <article className="monthly-expenses">
-              </article>
-
-              <article className="recent-transactions">
-                <h2 className="header-text">Recent Transactions</h2>
-                <form className="recent-transaction-form" onSubmit={handleTransactionSubmit}>
-                  <div className="form-row">
-                    <label htmlFor="transaction-amt">Amount</label>
-                    <input id="transaction-amt" type="number" className="form-control" placeholder="Amount" ref={transactionAmountRef} required/>
-                  </div>
-                  <div className="form-row">
-                    <label htmlFor='transaction-category'>Category</label> 
-                    <select id="transaction-category" ref={transactionTypeRef} required>
-                      <option value="bills">Bills</option>
-                      <option value="grocery">Grocery</option>
-                      <option value="personal">Personal</option>
-                      <option value="home">Home</option>
-                    </select>
-                    <span className="side-btn">
-                      <button className="add-btn" type="button">Add Category</button>
-                    </span>
-                  </div>
-                  <div className="form-row">
-                    <button className="submit-btn" type="submit">Add</button>
-                  </div>                 
-                </form>
-                {
-                  recentTransactions.length !== 0 ? (
-                    <ul className="transaction-list">
-                      {
-                        recentTransactions.map((transaction:ExpensesType) => {
-                          return (
-                            <li className="transaction-item" key={transaction.id}>
-                              <span className="transaction-category">{transaction.category}</span>
-                              <span className="transaction-amount">{transaction.amount}</span>
-                            </li>
-                          )
-                        })
-                      }
-                     
-                    </ul>
-                  ):(
-                    <p className="secondary-text">No Transactions added</p>
-                  )
-                }
-                
-              </article>
+              <BudgetInfo budgetMonth={budgetMonth} budget={budget} />
+              <AddRecentTransactions 
+                handleTransactionSubmit={handleTransactionSubmit} 
+                recentTransactions={recentTransactions} 
+                transactionAmount={transactionAmount}
+                setTransactionAmount={setTransactionAmount}
+                transactionType={transactionType}
+                setTransactionType={setTransactionType} />
             </>
-
           ) : (
-            <>
-              Please set your budget for the month of {date.split(' ')[1]}
-              <form className="set-budget-form" onSubmit={handleSubmit}>
-                <input type="number" className="form-control" placeholder="Budget Amount" ref={budgetAmountRef}  required />
-                <button type="submit">Set Budget</button>
-              </form>
-            </>
+            <SetBudget handleSubmit={handleSubmit} ref={budgetAmountRef} budgetMonth={budgetMonth} />
           )}
-          
         </section>
-      </>) : (<>
-        <h2 className="header-text">Please enter your name</h2>
-        <form onSubmit={handleUserName}>
-          <input type="text" className="form-control" ref={userNameRef} required />
-          <button type="submit">Submit</button>
-        </form>
-      </>) } 
+      </>) : (
+        <GetUserName handleUserName={handleUserName} ref={userNameRef}/>
+      ) } 
       
     </>
   )
