@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef, FormEvent } from 'react'
+import { FC, useEffect, useState, useRef } from 'react'
 import './App.css'
 import GetUserName from './components/GetUserName'
 import SetBudget from './components/SetBudget'
@@ -8,11 +8,12 @@ import BudgetInfo from './components/BudgetInfo'
 export type ExpensesType = {
   id: number,
   category: string,
+  comment: string,
   amount: number,
   date: string
 }
 
-type MonthlyBudgetType = {
+export type MonthlyBudgetType = {
   id: number,
   date: string,
   month: string,
@@ -30,8 +31,9 @@ const App: FC = () => {
   const [recentTransactions, setRecentTransactions] = useState<ExpensesType[]>([])
   const [transactionAmount, setTransactionAmount] = useState<number>(0);
   const [transactionType, setTransactionType] = useState<string>('default');
-  const userNameRef = useRef(null);
+  const [transactionComment, setTransactionComment] = useState<string>('');
   const budgetAmountRef = useRef(null);
+  const userNameRef = useRef(null);
 
   const getCurrentDate = (): string => {
     const today = new Date();
@@ -48,8 +50,7 @@ const App: FC = () => {
   const initializeMonth = (): void => {
     setBudgetMonth(date.split(' ')[1]);
   }
-
-
+  
   const checkCurrentMonthlyBudget = (): void => {
     const currentDate = date;
     if (monthlyBudget.length !== 0 && monthlyBudget.find((budget) => budget.date = currentDate)) {
@@ -69,50 +70,6 @@ const App: FC = () => {
       return;
     }
     setBudget(getBudgetAmount[0].budget);
-  }
-
-
-  const handleSubmit = (event: FormEvent): void => {
-    event.preventDefault();
-    const currentDate = date;
-
-    if (monthlyBudget.find((budget) => budget.date === currentDate)) {
-      return;
-    }
-    const budgetObject: MonthlyBudgetType = {
-      id: Date.now(),
-      budget: budgetAmountRef.current.value,
-      date: currentDate,
-      month: budgetMonth
-    }
-
-    setMonthlyBudget([...monthlyBudget, budgetObject])
-  }
-
-  const handleUserName = (event: FormEvent) => {
-    event.preventDefault();
-    setUserName(userNameRef.current.value);
-  }
-
-  const handleTransactionSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if (transactionType === 'default') {
-      return;
-    }
-
-    if (transactionAmount == null || transactionAmount === 0 || transactionAmount < 0) {
-      return;
-    }
-    const transactionObj: ExpensesType = {
-      id: Date.now(),
-      category: transactionType,
-      date: date,
-      amount: transactionAmount
-    }
-
-    setRecentTransactions([...recentTransactions, transactionObj]);
-    setTransactionAmount(0)
-    setTransactionType("default")
   }
 
   useEffect(() => {
@@ -146,19 +103,29 @@ const App: FC = () => {
               <>
                 <BudgetInfo budgetMonth={budgetMonth} budget={budget} />
                 <AddRecentTransactions
-                  handleTransactionSubmit={handleTransactionSubmit}
+                  date={date}
                   recentTransactions={recentTransactions}
+                  setRecentTransactions={setRecentTransactions}
                   transactionAmount={transactionAmount}
                   setTransactionAmount={setTransactionAmount}
                   transactionType={transactionType}
-                  setTransactionType={setTransactionType} />
+                  setTransactionType={setTransactionType}
+                  transactionComment={transactionComment}
+                  setTransactionComment={setTransactionComment}
+                   />
               </>
             ) : (
-              <SetBudget handleSubmit={handleSubmit} ref={budgetAmountRef} budgetMonth={budgetMonth} />
+              <SetBudget 
+                ref={budgetAmountRef} 
+                budgetMonth={budgetMonth} 
+                monthlyBudget={monthlyBudget} 
+                setMonthlyBudget={setMonthlyBudget}
+                date={date} 
+              />
             )}
           </section>
         </>) : (
-        <GetUserName handleUserName={handleUserName} ref={userNameRef} />
+        <GetUserName ref={userNameRef} setUserName={setUserName} />
       )}
 
     </>

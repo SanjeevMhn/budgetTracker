@@ -1,11 +1,15 @@
-import { FormEvent, PropsWithChildren, forwardRef } from 'react';
+import { Dispatch, FormEvent, PropsWithChildren, SetStateAction, forwardRef } from 'react';
 
 type GetUserNameProps = {
-    handleUserName: (event:FormEvent) => void
+    setUserName: Dispatch<SetStateAction<string>>
 }
 
 
-const GetUserName = forwardRef<HTMLInputElement, PropsWithChildren<GetUserNameProps>>(({handleUserName}, userNameRef) => {
+const GetUserName = forwardRef<HTMLInputElement,PropsWithChildren<GetUserNameProps>>(({ setUserName }, userNameRef) => {
+    const handleUserName = (event: FormEvent) => {
+        event.preventDefault();
+        setUserName(userNameRef.current.value);
+    }
     return (
         <>
             <h2 className="header-text">Please enter your name</h2>
